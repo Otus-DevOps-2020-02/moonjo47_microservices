@@ -1,0 +1,43 @@
+version: "3.3"
+services:
+  post_db:
+    image: mongo:3.2
+    volumes:
+      - post_db:/data/db
+    networks:
+      - reddit
+  ui:
+    environment:
+      VERSION_SERVICE: ${VERSION_SERVICE}
+      USERNAME: ${USERNAME}
+      PORT: ${PORT}
+    build: ./ui
+    image: ${USERNAME}/ui:${VERSION_SERVICE}
+    ports:
+      - ${PORT}:${PORT}/tcp
+    networks:
+      - reddit
+  post:
+    environment:
+      VERSION_SERVICE: ${VERSION_SERVICE}
+      USERNAME: ${USERNAME}
+      PORT: ${PORT}
+    build: ./post-py
+    image: ${USERNAME}/post:${VERSION_SERVICE}
+    networks:
+      - reddit
+  comment:
+    environment:
+      VERSION_SERVICE: ${VERSION_SERVICE}
+      USERNAME: ${USERNAME}
+      PORT: ${PORT}
+    build: ./comment
+    image: ${USERNAME}/comment:${VERSION_SERVICE}
+    networks:
+      - reddit
+
+volumes:
+  post_db:
+
+networks:
+  reddit:
